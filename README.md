@@ -68,7 +68,7 @@ An example of tree diameter measurement using street view images.
 [Street tree diamter measurement](diameter_measure_usage.ipynb)
 
 
-# These mapping and measuring pipelines are built upon this street view image operating library: 
-https://github.com/gladcolor/StreetView/
+# These mapping and measuring pipelines are built upon this street view image foundation algorithm library: 
+[Street View Image Foundation Algorithm Library](gsv_pano/README.md)
 
 Please feel free to contact me if you have any questions!
