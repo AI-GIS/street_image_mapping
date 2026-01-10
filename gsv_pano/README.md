@@ -4,6 +4,8 @@ A comprehensive Python library for downloading, processing, and analyzing street
 
 ![alt text](image.png)
 
+Jupyter Notebook Example: [street_view_image_toolkit_usage.ipynb](street_view_image_toolkit_usage.ipynb)
+
 ## Table of Contents
 - [Installation](#installation)
 - [Quick Start](#quick-start)
