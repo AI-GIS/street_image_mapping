@@ -1,0 +1,4 @@
+cd E:\OneDrive_PSU\OneDrive - The Pennsylvania State University\Research_doc\street_image_mapping\Python_code
+E:
+conda activate geo
+jupyter lab

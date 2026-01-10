@@ -1,0 +1,17 @@
+cd /media/huan/HD16T/Research/grounded_SAM
+conda activate dino
+
+
+conda create --name Grounded_SAM
+
+
+
+conda activate Grounded_SAM
+conda install -c anaconda ipykernel
+python -m ipykernel install --user --name=Grounded_SAM
+conda install -c conda-forge jupyterlab
+
+
+cd E:\Research\grounded_SAM
+e:
+jupyter lab
