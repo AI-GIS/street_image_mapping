@@ -146,6 +146,12 @@ class GSV_pano(object):
                     "DOM_points": None} #
 
         try:
+            # print("GSV_pano init called.")
+
+            if request_lat and request_lon:
+                if (-180 <= request_lon <= 180) and (-90 <= request_lat <= 90):
+                    # print("Getting panoId from lonlat: ", request_lon, request_lat)
+                    self.panoId, self.lon, self.lat = self.getPanoIDfrmLonlat(request_lon, request_lat)
 
             if (self.panoId != 0) and (self.panoId is not None) and (len(str(self.panoId)) == 22):
                 # print("panoid: ", self.panoId)
@@ -155,11 +161,6 @@ class GSV_pano(object):
                 self.lat = self.jdata['Location']['lat']
             # else:
             #     logging.info("Found no paoraom in GSV_pano _init__(): %s" % panoId)
-
-            if request_lat and request_lon:
-                if (-180 <= request_lon <= 180) and (-90 <= request_lat <= 90):
-                    self.panoId, self.lon, self.lat = self.getPanoIDfrmLonlat(request_lon, request_lat)
-
 
 
             if os.path.exists(self.json_file):
@@ -180,11 +181,7 @@ class GSV_pano(object):
             #         panoId = basename
             #         self.panoId = panoId
 
-
-
-
-
-
+  
 
             # if self.crs_local and (self.lat is not None) and (self.lon is not None ):
             #     transformer = utils.epsg_transform(in_epsg=4326, out_epsg=self.crs_local)
@@ -200,14 +197,18 @@ class GSV_pano(object):
 
     def getPanoIDfrmLonlat(self, lon, lat):
         url = "https://maps.googleapis.com/maps/api/js/GeoPhotoService.SingleImageSearch?pb=!1m5!1sapiv3!5sUS!11m2!1m1!1b0!2m4!1m2!3d{0:}!4d{1:}!2d50!3m10!2m2!1sen!2sGB!9m1!1e2!11m4!1m3!1e2!2b1!3e2!4m10!1e1!1e2!1e3!1e4!1e8!1e6!5m1!1e2!6m1!1e2&callback=_xdc_._v2mub5"
+        
         url = url.format(lat, lon)
+        # print("url in getPanoIDfrmLonlat():", url)
         resp = requests.get(url, proxies=None)
-        # print(url)
+        # print("url in getPanoIDfrmLonlat():", url)
         line = resp.text.replace("/**/_xdc_._v2mub5 && _xdc_._v2mub5( ", "")[:-2]
+        # print("line: "  , line)
 
         if len(line) > 1000:
             try:
                 jdata = json.loads(line)
+                # print("jdata: ", jdata)
                 panoId = jdata[1][1][1]
                 pano_lon = jdata[1][5][0][1][0][3]
                 pano_lat = jdata[1][5][0][1][0][2]
@@ -1166,7 +1167,7 @@ class GSV_pano(object):
         return P
 
 
-    def get_point_cloud(self, zoom=0, distance_threshole=40, color=True, saved_path=""):  # return: numpy array
+    def get_point_cloud(self, zoom=0, distance_threshold=40, color=True, saved_path=""):  # return: numpy array
         ''':param
         pano_zoom: -1: not colorize the point cloud
         '''
@@ -1267,7 +1268,7 @@ class GSV_pano(object):
 
                 P = P[np.where(dm_mask.ravel())]
                 # distance_threshole = 20
-                P = P[P[:, 3] < distance_threshole]
+                P = P[P[:, 3] < distance_threshold]
                 P = P[P[:, 3] > 0]
 
 
@@ -1335,11 +1336,12 @@ class GSV_pano(object):
             return target
 
         except Exception as e:
-            logger.exception("Error in get_panorama(): %s", e)
+            logger.exception("Error in download_panorama(): %s", e)
             print("GSV url:", utils.get_GSV_URL_from_panoId(self.panoId))
             return None
 
     def get_panorama(self, prefix="", suffix="", zoom: int = 5, check_size=False, skip_exist=True):
+        # print("Old get_panorama is called.")
         """Reference:
             https://developers.google.com/maps/documentation/javascript/streetview
             See the part from "Providing Custom Street View Panoramas" section.
@@ -1355,13 +1357,16 @@ class GSV_pano(object):
             suffix = '_' + suffix
 
         target = None
+        print("self.jdata:", self )
 
         try:
             if (str(self.panoId) == str(0)) or (len(self.panoId) < 20):
                 logger.info("%s is not a panoId. Returned None", self.panoId)
                 return None
+            # print("self.jdata:", self )
 
             if (self.panorama['image'] is None) or (zoom != self.panorama['zoom']): # need to download
+                # print("self.jdata:", self )
                 tile_width = self.jdata['Data']['tile_width']
                 tile_height = self.jdata['Data']['tile_height']
 
@@ -1418,6 +1423,7 @@ class GSV_pano(object):
 
             else:
                 return self.panorama
+                # return None
 
         except Exception as e:
             logger.exception("Error in get_panorama(): %s, %s " % (e,  self.panoId))
