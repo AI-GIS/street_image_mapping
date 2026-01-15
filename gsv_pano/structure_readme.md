@@ -2,7 +2,8 @@
 
 This note describes how `gsv_pano/pano.py` and `gsv_pano/utils.py` organize
 Street View imagery, depth data, and metadata. It is written to help a new
-reader understand the data products and how they relate.
+reader understand the data products and how they relate. The structure is inspired by the Google Street View medata format, but refactored for clarity and
+ease of use, while source-agnostic. Developers can transfer other sources street view image, such as Mapillary, into this structure for processing.
 
 ## 1) Main objects and data flow
 
